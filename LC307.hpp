@@ -50,7 +50,7 @@ class LC307 : public LibXR::Application {
       : configure_on_boot_(configure_on_boot),
         init_timeout_ms_(init_timeout_ms),
         frame_timeout_ms_(frame_timeout_ms),
-        topic_(topic_name, sizeof(sample_)),
+        topic_(LibXR::Topic::CreateTopic<Sample>(topic_name)),
         uart_(hw.template FindOrExit<LibXR::UART>({uart_name})),
         cmd_file_(LibXR::RamFS::CreateCommand("lc307", CommandFunc, this)) {
     app.Register(*this);
