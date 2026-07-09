@@ -2,16 +2,16 @@
 
 // clang-format off
 /* === MODULE MANIFEST V2 ===
-module_description: LC307 optical-flow UART driver with optional boot-time sensor configuration and topic publish
+module_description: XRobot Module for UPIXELS LC307 optical flow sensor
 constructor_args:
   - topic_name: "lc307_flow"
   - task_stack_depth: 2048
-  - uart_name: "usart3"
+  - uart_name: "lc307_uart"
   - configure_on_boot: true
   - init_timeout_ms: 1500
   - frame_timeout_ms: 200
 template_args: []
-required_hardware: usart3/USART3 ramfs
+required_hardware: lc307_uart ramfs
 depends: []
 === END MANIFEST === */
 // clang-format on
@@ -45,7 +45,7 @@ class LC307 : public LibXR::Application {
 
   LC307(LibXR::HardwareContainer& hw, LibXR::ApplicationManager& app,
         const char* topic_name, size_t task_stack_depth,
-        const char* uart_name = "usart3", bool configure_on_boot = true,
+        const char* uart_name = "lc307_uart", bool configure_on_boot = true,
         uint32_t init_timeout_ms = 1500, uint32_t frame_timeout_ms = 200)
       : configure_on_boot_(configure_on_boot),
         init_timeout_ms_(init_timeout_ms),

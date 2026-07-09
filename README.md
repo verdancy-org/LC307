@@ -1,32 +1,48 @@
 # LC307
 
-LC307 光流模块的 LibXR 封装，参考 `xrobot-org/BMI088` 的模块形态实现：
+UPIXELS LC307 UART optical flow sensor module for XRobot.
 
-- 构造时绑定硬件并注册应用
-- 启动后台线程解析 UART 数据流
-- 发布光流 Topic
-- 在 `ramfs/bin/lc307` 暴露状态命令
+This module binds to the LC307 UART stream, optionally configures the sensor at
+boot, parses optical-flow frames in a background thread, publishes flow and
+distance samples, and exposes a RamFS shell command for status output.
+
+The UART name is a constructor argument, so projects may use other hardware
+aliases if needed.
 
 ## Required Hardware
 
-- `usart3` 或等价别名
+- `lc307_uart`
 - `ramfs`
 
 ## Constructor Arguments
 
-- `topic_name`
-- `task_stack_depth`
-- `uart_name`
-- `configure_on_boot`
-- `init_timeout_ms`
-- `frame_timeout_ms`
+- `topic_name`: default `"lc307_flow"`
+- `task_stack_depth`: default `2048`
+- `uart_name`: default `"lc307_uart"`
+- `configure_on_boot`: default `true`
+- `init_timeout_ms`: default `1500`
+- `frame_timeout_ms`: default `200`
 
-## Published Topic
+## Published Topics
 
-`topic_name` 的 payload 为 `LC307::Sample`，包含：
-- 原始 `flow_x_raw` / `flow_y_raw`
-- 以 1m 高度换算的 `flow_x_at_1m_mps` / `flow_y_at_1m_mps`
-- `integration_time`
-- `distance_mm` / `distance_m`
-- `quality`
-- `version`
+- `topic_name`: `LC307::Sample`, including raw flow, 1 m normalized flow velocity, integration time, distance, quality, and version
+
+## Shell Commands
+
+The module registers `bin/lc307` in `RamFS`.
+
+- `bin/lc307` or `bin/lc307 status`: print frame counters, flow, distance, quality, and version
+
+## XRobot Configuration Example
+
+```yaml
+- id: flow
+  name: LC307
+  constructor_args:
+    topic_name: "lc307_flow"
+    task_stack_depth: 2048
+    uart_name: "lc307_uart"
+    configure_on_boot: true
+    init_timeout_ms: 1500
+    frame_timeout_ms: 200
+```
